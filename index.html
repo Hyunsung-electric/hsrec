@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>현성전기 | 정류기 및 전력 변환 장치 전문</title>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+
+/* 수정된 가로 스크롤 방지 코드 */
+html, body {
+    /* overflow-x: hidden에 !important를 빼거나, 최소화합니다 */
+    overflow-x: hidden; 
+    width: 100%;
+}
+
+/* AOS 관련 코드 수정: overflow: hidden을 제거하여 버튼 디자인 깨짐 방지 */
+[data-aos] {
+    pointer-events: none; /* 애니메이션 중 클릭 방해 방지 */
+}
+
+/* 애니메이션이 끝난 후에는 정상 작동하도록 설정 */
+.aos-animate {
+    pointer-events: auto;
+}
+        
+/* 로고 스타일 강제 고정 */
+a.logo {
+    display: inline-block;
+    text-decoration: none;
+    color: #004680 !important; /* 현성전기 브랜드 컬러 */
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    cursor: pointer;
+}
+
+.logo:hover {
+    color: #004680; /* 호버 시에도 색상 유지 또는 약간 진하게 */
+}
+
+
+
+
+/* 로고 클릭 시 색상 변화 방지 */
+.logo:hover, .logo:active, .logo:focus {
+    color: #004680;
+}
+
+        /* 햄버거 버튼 기본 스타일 (데스크탑에선 숨김) */
+.menu-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.menu-btn span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background: #004680;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+/* [기본 설정] 데스크탑에서는 카드를 안 보이게 합니다 */
+.mobile-record-list {
+    display: none;
+}
+
+  /* 창 크기가 줄어들 때 메뉴가 밀리는 현상 방지 (중간 해상도 대응) */
+@media (max-width: 1250px) {
+    header {
+        padding: 15px 5% !important; /* 좌우 여백을 줄임 */
+    }
+    nav ul {
+        gap: 20px; /* 메뉴 사이 간격을 40px에서 20px로 줄임 */
+    }
+    nav ul li a {
+        font-size: 15px; /* 글씨 크기를 살짝 줄임 */
+    }
+    .logo {
+        font-size: 20px; /* 로고 크기도 살짝 조절 */
+    }
+}
+
+  @media (max-width: 1024px) {
+     /* 모바일에서는 테이블을 숨깁니다 */
+    .table-responsive {
+        display: none;
+    }
+    /* 1. 카드 리스트와 페이지네이션의 부모 컨테이너(섹션)를 세로 정렬로 강제 */
+    #records {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* 2. 납품실적 기존 테이블 숨기기 */
+    .table-responsive {
+        display: none;
+    }
+
+    /* 3. 모바일 카드 리스트 설정 */
+    .mobile-record-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        order: 2; /* 연도 필터(1) 다음에 위치 */
+        margin-bottom: 20px;
+    }
+
+    /* 4. 페이지네이션 버튼 위치 수정 */
+    #pagination {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        order: 3; /* 카드 리스트(2) 아래에 위치하도록 순서 지정 */
+        margin-top: 10px;
+        margin-bottom: 40px; /* 푸터와의 간격 확보 */
+        width: 100%;
+    }
+
+    /* 5. 연도 필터 버튼 */
+    #year-filter {
+        order: 1;
+        margin-bottom: 20px;
+    }
+
+    /* 개별 카드 디자인 */
+    .record-card {
+        background: #fff;
+        border: 1px solid #eef2f6;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .card-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .card-row:last-child { margin-bottom: 0; }
+
+    .card-label {
+        color: #888;
+        font-weight: 600;
+        min-width: 60px;
+    }
+
+    .card-value {
+        color: #333;
+        text-align: right;
+        font-weight: 500;
+    }
+
+    /* 업체명 강조 */
+    .card-client {
+        font-size: 18px;
+        color: #004680;
+        font-weight: 800;
+        border-bottom: 2px solid #f4f8fb;
+        padding-bottom: 10px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-tag {
+        font-size: 11px;
+        background: #eef2f6;
+        color: #004680;
+        padding: 3px 8px;
+        border-radius: 4px;
+    }
+}   
+
+
+/* 모바일 미디어 쿼리 수정 */
+@media (max-width: 768px) {
+
+   
+ 
+    /* 헤더 내부 요소 정렬 최적화 */
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 5% !important;
+    }
+
+    .menu-btn { display: flex; z-index: 1001; }
+
+    nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 70%;
+        height: 100vh;
+        background: #ffffff;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        transition: 0.4s ease-in-out;
+        padding-top: 100px;
+        z-index: 1000;
+    }
+
+    nav.active { right: 0; }
+    .menu-btn { display: flex; } /* 햄버거 버튼 표시 */
+
+    nav {
+        position: fixed;
+        top: 0;
+        right: -100%; /* 기본 상태: 오른쪽 밖에 숨김 */
+        width: 70%;
+        height: 100vh;
+        background: #ffffff; /* 메뉴 배경색 */
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        transition: 0.4s ease-in-out;
+        padding-top: 100px;
+        z-index: 1000;
+    }
+
+    /* 메뉴가 활성화되었을 때 (JS로 active 클래스 추가됨) */
+    nav.active { 
+        right: 0; 
+    } 
+
+    nav ul { 
+        display: flex !important; /* 기존의 display: none을 무시하고 강제로 표시 */
+        flex-direction: column;
+        align-items: center;
+        gap: 35px;
+    }
+
+    nav ul li a {
+        font-size: 20px;
+        color: #333 !important; /* 글자색을 명확하게 지정 */
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+    nav ul li a {
+    font-size: 20px;
+    color: #333 !important;
+    display: block;
+    width: 100%;
+    text-align: center;
+    transition: 0.3s; /* 색상이 부드럽게 변하도록 추가 */
+}
+
+/* 마우스를 올렸을 때(Hover) 색상 변경 */
+nav ul li a:hover {
+    color: #004680 !important; /* 현성전기 포인트 컬러로 변경 */
+}
+    
+    /* 햄버거 버튼 애니메이션 */
+    .menu-btn.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+    .menu-btn.open span:nth-child(2) { opacity: 0; }
+    .menu-btn.open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+    /* 기존에 하단에 있던 nav ul { display: none; } 부분은 삭제하거나 위 코드로 대체하세요 */
+    .hero h2 { font-size: 32px; }
+    .hero p { font-size: 18px; }
+}
+        /* 기본 스타일 초기화 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Pretendard', sans-serif; line-height: 1.6; color: #333; overflow-x: hidden; }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* 헤더 스타일 */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 10%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: 0.4s;
+        }
+        header.scrolled { padding: 15px 10%; background: #fff; }
+        .logo { font-size: 24px; font-weight: 800; color: #004680; letter-spacing: -0.5px; }
+        nav ul { display: flex; gap: 40px; }
+        nav ul li a { font-weight: 600; font-size: 16px; transition: 0.3s; }
+        nav ul li a:hover { color: #004680; }
+
+        /* 메인 배너 (새로운 애니메이션: Soft Zoom) */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            text-align: center;
+            overflow: hidden;
+        }
+        .hero-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('banner.png') no-repeat center/cover;
+            z-index: -1;
+            animation: softZoom 15s infinite alternate ease-in-out;
+        }
+        @keyframes softZoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+        /* style 태그 내의 .hero h2, .hero p 부분을 아래와 같이 수정해 보세요 */
+
+.hero h2 { 
+    /* 기본 56px에서 화면이 작아질수록 줄어들도록 설정 */
+    font-size: clamp(32px, 5vw, 56px); 
+    font-weight: 700; 
+    margin-bottom: 20px; 
+    text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    word-break: keep-all; /* 단어 단위로 줄바꿈하여 가독성 유지 */
+}
+
+.hero p { 
+    /* 기본 24px에서 화면이 작아질수록 줄어들도록 설정 */
+    font-size: clamp(18px, 2.5vw, 24px); 
+    margin-bottom: 40px; 
+    opacity: 0.9; 
+    font-weight: 300;
+    word-break: keep-all;
+}
+        .btn { padding: 16px 45px; background: #004680; color: #fff; border-radius: 4px; transition: 0.4s; font-weight: bold; border: none; cursor: pointer; }
+        .btn:hover { background: #002d52; transform: translateY(-3px); }
+
+        /* 섹션 공통 스타일 */
+        section { padding: 140px 10% 100px; }
+        .section-title { text-align: center; margin-bottom: 70px; }
+        .section-title h3 { font-size: 40px; color: #111; margin-bottom: 15px; font-weight: 700; }
+        /* 줄 중앙 정렬 수정 */
+        .section-title .bar { width: 50px; height: 4px; background: #004680; margin: 0 auto; transition: 0.5s; }
+        section:hover .section-title .bar { width: 100px; }
+
+        /* 회사 소개 */
+        #about { background: #fff; }
+        .about-content { display: flex; align-items: center; gap: 80px; flex-wrap: wrap; }
+        .about-text { flex: 1; min-width: 300px; }
+        .about-text p { font-size: 18px; color: #555; line-height: 1.8; margin-bottom: 25px; word-break: keep-all; }
+        .about-image { flex: 1; min-width: 300px; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .about-image img { width: 100%; display: block; }
+
+       /* 1250px 이하: 텍스트와 연혁의 간격 및 비율 최적화 */
+@media (max-width: 1250px) {
+    .about-content {
+        gap: 40px; /* 간격을 80px에서 40px로 줄임 */
+    }
+    .about-text p {
+        font-size: 16px; /* 폰트 크기를 살짝 줄여 세로 길이를 축소 */
+        margin-bottom: 15px;
+    }
+    .history-container {
+        padding: 20px;
+        max-height: 500px; /* 연혁 박스 높이를 약간 줄여 밸런스 조정 */
+    }
+}
+
+/* 1024px 이하: 억지로 옆에 두지 않고 위아래로 배치 전환 */
+@media (max-width: 1024px) {
+    .about-content {
+        flex-direction: column; /* 가로에서 세로 배치로 변경 */
+    }
+    .about-text, .history-container {
+        width: 100%; /* 너비를 100%로 사용하여 가독성 확보 */
+        min-width: unset;
+    }
+    .history-container {
+        max-height: 400px; /* 세로 배치일 때는 연혁이 너무 길지 않게 제한 */
+    }
+}
+
+/* 제품 소개 섹션 배경 */
+#products { background: #f9fbff; }
+
+/* 이미지 영역 (정사각형 유지) */
+.product-img {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* 가로세로 1:1 비율 */
+    overflow: hidden;
+}
+
+.product-img img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    transition: 0.5s;
+}
+
+/* 제품 이름 (설명글 p태그는 HTML에서 삭제해야 함) */
+.product-info { 
+    padding: 15px 5px; 
+    text-align: center; 
+}
+
+.product-info h4 { 
+    font-size: 16px; 
+    color: #004680; 
+    margin: 0;
+    word-break: keep-all; 
+}
+
+/* 제품 소개 그리드: 기본 5열 */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5열 유지 */
+    gap: 15px;      /* 왼쪽 파일처럼 간격을 좁혀서 카드 너비를 확보 */
+    width: 100%;
+    max-width: none; /* 오른쪽 파일에 추가된 1200px 제한을 없애야 왼쪽처럼 꽉 차게 커집니다 */
+    margin: 0 auto;
+}
+
+/* 모달 배경: 스크롤 가능하게 설정 */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    overflow-y: auto; /* 이미지가 길면 스크롤 생성 */
+    cursor: pointer;
+}
+
+/* 모달 이미지: 크기 조절 (원하시는 대로 숫자를 변경하세요) */
+.modal-content {
+    margin: 40px auto; 
+    display: block;
+    width: 70%;        /* 화면 대비 80% 크기 */
+    max-width: 800px; /* 최대 너비 제한 */
+    height: auto;
+    border-radius: 8px;
+    cursor: default;
+}
+
+/*  모바일 대응 (반응형): 이 부분이 추가되어야 자연스럽게 바뀝니다  */
+@media (max-width: 1024px) {
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr); /* 태블릿에선 3열 */
+    }
+}
+
+@media (max-width: 768px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr); /* 모바일에선 2열 */
+        gap: 10px;
+    }
+    .modal-content {
+        width: 95%; /* 모바일에선 이미지를 더 크게 */
+    }
+}
+
+@media (max-width: 480px) {
+    .products-grid {
+        grid-template-columns: 1fr; /* 작은 폰에선 1열 */
+    }
+}
+
+.product-card {
+    background: #fff;
+    border-radius: 12px; /* 모서리를 둥글게 */
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #eee; /* 연한 회색 테두리 */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* 부드러운 그림자 */
+    display: flex;
+    flex-direction: column;
+}
+
+/* 마우스를 올렸을 때 살짝 올라가는 효과 */
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+}
+
+.product-info {
+    padding: 20px 10px; /* 안쪽 여백 늘림 */
+    text-align: center;
+    background: #fff;
+}
+
+.product-info h4 {
+    font-size: 17px;
+    color: #004680; /* 현성전기 네이비 컬러 */
+    margin: 0;
+    font-weight: 600;
+}
+
+        /* 납품 실적 테이블 */
+        .record-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; }
+        .record-table th { background: #004680; color: #fff; padding: 20px; }
+        /* 각 칸의 너비를 비율로 지정 (총합 100%) */
+.record-table th:nth-child(1) { width: 20%; } /* 업체명 */
+.record-table th:nth-child(2) { width: 15%; } /* 품명 */
+.record-table th:nth-child(3) { width: 15%; } /* 규격 */
+.record-table th:nth-child(4) { width: 25%; } /* 사양 */
+.record-table th:nth-child(5) { width: 10%; } /* 수량 */
+.record-table th:nth-child(6) { width: 15%; } /* 비고 */
+        .record-table td { padding: 20px; border-bottom: 1px solid #eee; text-align: center; transition: 0.3s; }
+.record-table td {
+    word-break: keep-all; /* 단어 단위로 줄바꿈하여 한글이 어색하게 깨지는 것 방지 */
+}
+        .record-table tr:hover td { background: #f4f8fb; }
+
+        /* 견적 문의 폼 */
+#contact { background: #fff; }
+.contact-container { max-width: 800px; margin: 0 auto; background: #f9fbff; padding: 60px; border-radius: 20px; border: 1px solid #eef2f6; }
+.form-group { margin-bottom: 25px; }
+.form-group label { display: block; margin-bottom: 10px; font-weight: 600; font-size: 15px; }
+
+/* input과 textarea 모두에 폰트를 강제 적용합니다 */
+.form-group input, 
+.form-group textarea { 
+    width: 100%; 
+    padding: 15px; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    font-size: 16px; 
+    outline: none; 
+    font-family: 'Pretendard', sans-serif; /* 폰트를 위와 동일하게 지정 */
+}
+
+.form-group input:focus, 
+.form-group textarea:focus { 
+    border-color: #004680; 
+}
+
+        /* 푸터 */
+        footer { background: #1a1a1a; color: #999; padding: 80px 10%; text-align: center; font-size: 14px; }
+        footer strong { color: #fff; display: block; font-size: 18px; margin-bottom: 15px; }
+
+      /* 태블릿 및 작은 데스크탑 (1024px ~ 1250px) 구간 대응 */
+@media (max-width: 1250px) {
+    #contact {
+        padding: 100px 5% 80px; /* 섹션 전체 상하 여백 축소 */
+    }
+
+    .contact-wrapper {
+        gap: 20px; /* 좌우 간격을 좁혀서 최대한 가로 정렬 유지 */
+    }
+
+    .contact-container {
+        padding: 40px; /* 폼 내부 여백을 60px에서 40px로 축소 */
+    }
+
+    .contact-info-side {
+        flex: 1; 
+    }
+    
+    .map-container {
+        height: 300px; /* 지도 높이를 살짝 줄여 세로 길이 조절 */
+    }
+}
+
+/* 폼이 아래로 떨어지기 직전 (약 900px) 구간 정돈 */
+@media (max-width: 992px) {
+    .contact-form-side, 
+    .contact-info-side {
+        flex: 1 1 100%; /* 너비를 100%로 꽉 채우되 */
+    }
+    
+    .contact-container {
+        padding: 30px; /* 여백을 더 줄여서 컴팩트하게 변경 */
+    }
+}
+
+        @media (max-width: 768px) {
+            .hero h2 { font-size: 36px; }
+            .hero p { font-size: 18px; }
+            header { padding: 15px 5%; }
+            nav ul { display: none; }
+        }
+
+     /* 페이지네이션 버튼 스타일 */
+.pg-btn {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: 0.3s;
+    font-weight: 600;
+}
+
+.pg-btn:hover {
+    background: #f4f8fb;
+    border-color: #004680;
+    color: #004680;
+}
+
+.pg-btn.active {
+    background: #004680;
+    color: #fff;
+    border-color: #004680;
+}
+
+    /* 연혁(History) 스타일 */
+
+.history-container {
+    flex: 1;
+    min-width: 300px;
+    padding: 30px; /* 여백을 조금 더 넓힘 */
+    background: #f9fbff;
+    border-radius: 12px;
+    max-height: 600px; /* 높이를 조금 더 키움 */
+    overflow-y: auto;
+    border: 1px solid #eef2f6;
+}
+
+/* 스크롤바 디자인 (크롬, 사파리) */
+.history-container::-webkit-scrollbar {
+    width: 6px;
+}
+.history-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.history-container::-webkit-scrollbar-thumb {
+    background: #004680;
+    border-radius: 10px;
+}
+
+.history-year {
+    font-weight: 800;
+    color: #004680;
+    font-size: 16px; /* 폰트 사이즈 살짝 조절 */
+    display: block;
+    margin-bottom: 3px;
+}
+
+.history-desc {
+    font-size: 14.5px; /* 가독성을 위해 조절 */
+    color: #444;
+    line-height: 1.6;
+    word-break: keep-all; /* 단어 단위 줄바꿈으로 깔끔하게 */
+}
+/* 견적문의 섹션 레이아웃 수정 */
+.contact-wrapper {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.contact-form-side { flex: 1.5; min-width: 300px; }
+.contact-info-side { flex: 1; min-width: 300px; }
+
+    </style>
+</head>
+<body>
+    <header id="header">
+        <a href="#home" class="logo">HYUNSUNG ELECTRIC</a>
+   
+        <div class="menu-btn" id="menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <nav id="nav-menu">
+            <ul>
+                <li><a href="#about">회사소개</a></li>
+                <li><a href="#products">제품소개</a></li>
+                <li><a href="#records">납품실적</a></li>
+                <li><a href="#contact">견적문의</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content" data-aos="fade-up" data-aos-duration="1500">
+            <h2>산업용 정류기 솔루션의 리더</h2>
+            <p>현성전기는 고효율 전력 변환 기술로 산업의 내일을 만듭니다</p>
+            <a href="#contact" class="btn">프로젝트 상담하기</a>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="section-title" data-aos="fade-up">
+            <h3>회사 소개</h3>
+            <div class="bar"></div>
+        </div>
+        <div class="about-content" style="align-items: stretch;">
+            <div class="about-text" data-aos="fade-right">
+                <p><strong>현성전기</strong>는 1996년 설립 이후 꾸준히 습득한 기술력과 현장 경험을 바탕으로 표면처리 전원장치 분야에 있어 중국, 러시아, 이집트, 슬로바키아, 이란 등으로 역수출하는 탄탄한 경쟁력을 갖춘 산업용 정류기 업체의 선두주자로 자리매김하고 있습니다.</p>
+                <p>도금, 전착, 전해, 아노다이징, 기타 직류전원장치의 다양한 제품을 생산하고 있으며, 항상 소비자의 취향에 맞는 제품개발에 노력을 기울이고, 신의를 저버리지 않도록 저희 임직원 일동은 항상 노력해나갈 것을 약속드립니다. 앞으로도 끊임없는 노력과 항상 최고의 품질과 경쟁력, 최고의 신용으로 다가서는 참된 기업이 되겠습니다.</p>
+<p>현성전기는 축적된 기술과 노하우로 국내외 표면처리 전원장치 분야에서 인정 받고 있으며 이에 만족하지 않고 완벽한 사후 관리 및 지원으로 고객 여러분들의 요구에 부응하고자 노력하고 있습니다. 항상 노력하는 모습으로 고객 여러분들과 함께 하겠습니다.</p>
+<p>감사합니다.</p>
+<p style="text-align: right; color: #111; font-size: 20px;">현성전기 대표 <strong>정 종 태</strong></p>
+            </div>
+            
+            <div class="history-container" data-aos="fade-left">
+    <h4 style="color: #004680; margin-bottom: 20px; font-size: 22px;">Company History</h4>
+    <div class="history-list">
+        <div class="history-item">
+            <span class="history-year">2011. 04</span>
+            <p class="history-desc">현대자동차 브라질공장 수출 (자동차 BODY용)</p>
+        </div>
+        <div class="history-item">
+            <span class="history-year">2009. 08</span>
+            <p class="history-desc">현대하이스코 협력업체 등록</p>
+        </div>
+        <div class="history-item">
+            <span class="history-year">2009. 05</span>
+            <p class="history-desc">르노삼성자동차 협력업체 등록</p>
+        </div>
+        <div class="history-item">
+            <span class="history-year">2006. 04</span>
+            <p class="history-desc">슬로바키아 전착정류기 수출 (CE 인증획득)</p>
+        </div>
+        <div class="history-item">
+            <span class="history-year">2006. 02</span>
+            <p class="history-desc">자가공장 취득 (992 ㎡)</p>
+        </div>
+        <div class="history-item">
+            <span class="history-year">2005. 05</span>
+            <p class="history-desc">전착정류기 중동 수출 (이란 RVM CO.,Ltd)</p>
+        </div>
+        <div class="history-item">
+            <span class="history-year">2004. 04</span>
+            <p class="history-desc">한국항공우주산업 업체 등록</p>
+        </div>
+        <div class="history-item">
+            <span class="history-year">2003. 10</span>
+            <p class="history-desc">전착정류기 기아자동차 중국 염성 1공장 수출 (자동차 BODY용)</p>
+        </div>
+        <div class="history-item">
+            <span class="history-year">2003. 08</span>
+            <p class="history-desc">전착정류기 현대자동차 중국 북경 1공장 수출 (자동차 BODY용)</p>
+        </div>
+        <div class="history-item">
+            <span class="history-year">2002. 10</span>
+            <p class="history-desc">현대, 기아자동차 통합구매 업체 등록</p>
+        </div>
+        <div class="history-item">
+            <span class="history-year">2001. 05</span>
+            <p class="history-desc">노광기 전원장치 (인버터정류기) 국내최초 개발 (삼성테크윈 납품)</p>
+        </div>
+        <div class="history-item">
+            <span class="history-year">2001. 01</span>
+            <p class="history-desc">공장확장 이전</p>
+        </div>
+        <div class="history-item">
+            <span class="history-year">2000. 05</span>
+            <p class="history-desc">기아자동차 업체 등록</p>
+        </div>
+        <div class="history-item">
+            <span class="history-year">1999. 07</span>
+            <p class="history-desc">대우자동차 업체 등록</p>
+        </div>
+        <div class="history-item">
+            <span class="history-year">1999. 01</span>
+            <p class="history-desc">공장확장 이전</p>
+        </div>
+        <div class="history-item">
+            <span class="history-year">1998. 04</span>
+            <p class="history-desc">진공플라즈마 전원장치 개발</p>
+        </div>
+        <div class="history-item">
+            <span class="history-year">1996. 12</span>
+            <p class="history-desc">현성전기 설립</p>
+        </div>
+    </div>
+</div>
+    </section>
+
+    <section id="products">
+    <div class="section-title" data-aos="fade-up">
+        <h3>제품 소개</h3>
+        <div class="bar"></div>
+    </div>
+    
+    <div class="products-grid">
+        <div class="product-card" data-aos="fade-up" data-aos-delay="100" onclick="openModal('product1.jpg')">
+            <div class="product-img"><img src="product1.jpg" alt="전착정류기"></div>
+            <div class="product-info"><h4>전착정류기</h4></div>
+        </div>
+        <div class="product-card" data-aos="fade-up" data-aos-delay="200" onclick="openModal('product2.jpg')">
+            <div class="product-img"><img src="product2.jpg" alt="도금정류기"></div>
+            <div class="product-info"><h4>도금정류기</h4></div>
+        </div>
+        <div class="product-card" data-aos="fade-up" data-aos-delay="300" onclick="openModal('product3.jpg')">
+            <div class="product-img"><img src="product3.jpg" alt="아노다이징"></div>
+            <div class="product-info"><h4>아노다이징</h4></div>
+        </div>
+        <div class="product-card" data-aos="fade-up" data-aos-delay="400" onclick="openModal('product4.jpg')">
+            <div class="product-img"><img src="product4.jpg" alt="IGBT정류기"></div>
+            <div class="product-info"><h4>IGBT정류기</h4></div>
+        </div>
+        <div class="product-card" data-aos="fade-up" data-aos-delay="500" onclick="openModal('product5.jpg')">
+            <div class="product-img"><img src="product5.jpg" alt="축전지 충전기"></div>
+            <div class="product-info"><h4>축전지 충전기</h4></div>
+        </div>
+    </div>
+</section>
+
+<div id="imageModal" class="modal-overlay" onclick="closeModal()">
+    <img class="modal-content" id="modalImage" onclick="event.stopPropagation();">
+</div>
+
+    <section id="records" data-aos="fade-up">
+    <div class="section-title">
+        <h3>납품 실적</h3>
+        <div class="bar"></div>
+    </div>
+
+    <div id="year-filter" style="text-align: center; margin-bottom: 30px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+        <button class="pg-btn active" onclick="filterByYear('all')">전체보기</button>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="record-table" id="recordTable">
+            <thead>
+                <tr>
+                    <th>업체명</th>
+                    <th>품명</th>
+                    <th>규격</th>
+                    <th>사양</th>
+                    <th>수량</th>
+                    <th>비고</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                </tbody>
+        </table>
+    </div>
+
+    <div id="pagination" style="text-align: center; margin-top: 30px; display: flex; justify-content: center; gap: 10px;">
+    </div>
+
+    <div id="mobileBody" class="mobile-record-list">
+    </div>
+
+</section>
+
+    <section id="contact" data-aos="zoom-in">
+    <div class="section-title">
+        <h3>견적 및 상담 문의</h3>
+        <div class="bar"></div>
+    </div>
+    
+    <div class="contact-wrapper" style="max-width: 1200px; margin: 0 auto; display: flex; gap: 40px; flex-wrap: wrap; align-items: flex-start;">
+        
+        <div class="contact-form-side" style="flex: 1.2; min-width: 320px;">
+            <div class="contact-container" style="margin: 0; width: 100%; max-width: none;">
+                <form>
+                    <div class="form-group">
+                        <label>성함 / 업체명</label>
+                        <input type="text" placeholder="성함 혹은 업체명을 입력하세요.">
+                    </div>
+                    <div class="form-group">
+                        <label>연락처</label>
+                        <input type="text" placeholder="연락처 혹은 이메일을 입력하세요.">
+                    </div>
+                    <div class="form-group">
+                        <label>문의 내용</label>
+                        <textarea rows="5" placeholder="궁금하신 점이나 장치 사양을 상세히 적어주세요."></textarea>
+                    </div>
+                    <button type="submit" class="btn" style="width:100%; border-radius: 8px;">상담 문의 신청하기</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="contact-info-side" style="flex: 1; min-width: 320px;">
+            <div style="margin-bottom: 25px; padding: 25px; background: #f4f8fb; border-radius: 20px; border: 1px solid #eef2f6;">
+                <h4 style="color: #004680; margin-bottom: 15px; font-size: 20px;">Contact Info</h4>
+                <p style="margin-bottom: 8px;"><strong>주소:</strong> 부산광역시 강서구 화전동 화전산단5로 98번길 17</p>
+                <p style="margin-bottom: 8px;"><strong>전화:</strong> 051-323-6850~1</p>
+                <p><strong>팩스:</strong> 051-323-6852</p>
+            </div>
+            <div class="map-container" style="border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); height: 350px;">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13058.185575691394!2d128.87546202519755!3d35.093064904917966!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3568c4c972e14893%3A0x59e3678c2efcea49!2z7ZiE7ISx7KCE6riw!5e0!3m2!1sko!2skr!4v1776944911216!5m2!1sko!2skr" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+    <footer>
+        <strong>HYUNSUNG ELECTRIC</strong>
+        <p>부산광역시 강서구 화전동 화전산단5로 98번길 17 | 대표전화: 051-323-6850~1 | FAX: 051-323-6852</p>
+        <p style="margin-top: 15px; opacity: 0.5;">&copy; 2026 HYUNSUNG ELECTRIC. All Rights Reserved.</p>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+
+        const menuBtn = document.getElementById('menu-btn');
+const navMenu = document.getElementById('nav-menu');
+
+// 기존 코드 하단에 추가
+document.querySelector('.logo').addEventListener('click', () => {
+    menuBtn.classList.remove('open');
+    navMenu.classList.remove('active');
+});
+
+
+// 버튼 클릭 시 메뉴 토글
+menuBtn.addEventListener('click', () => {
+    menuBtn.classList.toggle('open');
+    navMenu.classList.toggle('active');
+});
+
+// 메뉴 링크 클릭 시 메뉴 닫기 (이동 후 자동으로 닫히게 함)
+document.querySelectorAll('nav ul li a').forEach(link => {
+    link.addEventListener('click', () => {
+        menuBtn.classList.remove('open');
+        navMenu.classList.remove('active');
+    });
+});
+        // 헤더 스크롤 이벤트
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+     // 제품 소개 이미지 모달 열고 닫기
+      function openModal(imgSrc) {
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImage");
+    
+    modal.style.display = "block";
+    modalImg.src = imgSrc;
+    
+    document.body.style.overflow = "hidden"; // 배경 스크롤 방지
+}
+
+function closeModal() {
+    document.getElementById("imageModal").style.display = "none";
+    document.body.style.overflow = "auto"; // 스크롤 복구
+}
+   
+     // 1. 요청하신 6개 항목 기준 데이터 배열
+const recordData = [
+    { year: '2011', client: '현대자동차 브라질공장', item: '전착정류기', standard: 'SCR TYPE', spec: '150V 5000A', qty: '12대', note: '수출' },
+    { year: '2009', client: '현대하이스코', item: '정류기', standard: 'IGBT TYPE', spec: '12V 1000A', qty: '2대', note: '납품' },
+    { year: '2006', client: '슬로바키아', item: '전착정류기', standard: 'SCR TYPE', spec: '100V 3000A', qty: '4대', note: 'CE인증' },
+    { year: '2003', client: '기아차 중국 염성공장', item: '전착정류기', standard: 'SCR TYPE', spec: '150V 5000A', qty: '8대', note: '수출' },
+    { year: '2001', client: '삼성테크윈', item: '노광기 전원장치', standard: 'INVERTER', spec: 'DC 20V 500A', qty: '5대', note: '국내최초' },
+    // 여기에 이미지의 데이터를 계속 추가하세요.
+];
+
+let filteredData = [...recordData]; // 필터링된 데이터를 담을 변수
+const rowsPerPage = 10;
+let currentPage = 1;
+
+// 2. 테이블 출력 함수 (항목 수정됨)
+function displayTable(page) {
+    const tableBody = document.getElementById('tableBody');
+    const mobileBody = document.getElementById('mobileBody'); // 모바일 박스 추가
+    
+    tableBody.innerHTML = "";
+    mobileBody.innerHTML = ""; // 초기화
+    
+    page--;
+    const start = rowsPerPage * page;
+    const end = start + rowsPerPage;
+    const paginatedItems = filteredData.slice(start, end);
+
+    paginatedItems.forEach(item => {
+        // 1. 데스크탑용 테이블 행
+        const row = `<tr>
+            <td style="font-weight:bold;">${item.client}</td>
+            <td>${item.item}</td>
+            <td>${item.standard}</td>
+            <td>${item.spec}</td>
+            <td>${item.qty}</td>
+            <td>${item.note}</td>
+        </tr>`;
+        tableBody.innerHTML += row;
+
+        // 2. 모바일용 카드 (새로 추가)
+        const card = `
+            <div class="record-card" data-aos="fade-up">
+                <div class="card-client">
+                    ${item.client}
+                    <span class="card-tag">${item.note}</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-label">품명</span>
+                    <span class="card-value">${item.item}</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-label">규격/사양</span>
+                    <span class="card-value">${item.standard} / ${item.spec}</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-label">수량</span>
+                    <span class="card-value">${item.qty}</span>
+                </div>
+            </div>
+        `;
+        mobileBody.innerHTML += card;
+    });
+}
+
+// 3. 연도별 필터링 기능
+function filterByYear(year) {
+    if (year === 'all') {
+        filteredData = [...recordData];
+    } else {
+        filteredData = recordData.filter(item => item.year === year);
+    }
+    currentPage = 1;
+    displayTable(currentPage);
+    setupPagination();
+    
+    // 버튼 활성화 스타일
+    document.querySelectorAll('#year-filter .pg-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if(btn.innerText === year || (year === 'all' && btn.innerText === '전체보기')) {
+            btn.classList.add('active');
+        }
+    });
+}
+
+// 4. 연도 필터 버튼 자동 생성
+function setupYearFilters() {
+    const filterContainer = document.getElementById('year-filter');
+    const years = [...new Set(recordData.map(item => item.year))].sort().reverse();
+    
+    years.forEach(year => {
+        const btn = document.createElement('button');
+        btn.innerText = year;
+        btn.classList.add('pg-btn');
+        btn.onclick = () => filterByYear(year);
+        filterContainer.appendChild(btn);
+    });
+}
+
+// 페이지네이션 및 초기화 (기존 로직 유지)
+function setupPagination() {
+    const paginationElement = document.getElementById('pagination');
+    paginationElement.innerHTML = "";
+    const pageCount = Math.ceil(filteredData.length / rowsPerPage);
+    for (let i = 1; i <= pageCount; i++) {
+        const btn = document.createElement('button');
+        btn.innerText = i;
+        btn.classList.add('pg-btn');
+        if (currentPage === i) btn.classList.add('active');
+        btn.onclick = () => {
+            currentPage = i;
+            displayTable(currentPage);
+            document.querySelectorAll('#pagination .pg-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        };
+        paginationElement.appendChild(btn);
+    }
+}
+
+// 초기 실행
+setupYearFilters();
+displayTable(currentPage);
+setupPagination();
+
+
+    </script>
+</body>
+</html>
